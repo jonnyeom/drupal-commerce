@@ -85,6 +85,14 @@ class CouponRedemptionForm extends FormElement {
     // $wrapper_id = Html::getUniqueId($id_prefix . '-ajax-wrapper');
     $wrapper_id = $id_prefix . '-ajax-wrapper';
     $coupons = $order->get('coupons')->referencedEntities();
+
+    // This is the custom code added to remove Subscription/Campaign Coupons.
+    foreach ($coupons as $i => $coupon) {
+      if (!$coupon->get('subscription_code')->isEmpty() || $coupon->get('campaign_code')->isEmpty()) {
+        unset($coupons[$i]);
+      }
+    }
+    
     $cardinality_reached = $element['#cardinality'] && count($coupons) >= $element['#cardinality'];
 
     $element = [
